@@ -1,0 +1,110 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+library(scales)
+miRNA_seq_info<-read.csv("C:\\Users\\Admin\\Desktop\\miRNA_expression_csv\\miRNA_seq_info.csv")
+metadata <- read.csv("C:\\Users\\Admin\\Desktop\\miRNA_expression_csv\\metadata.csv")
+```
+```{r}
+Reads_threshold =500000
+Reads_nomalization_threshold =1000000
+expression_threshold =30
+```
+
+```{r}
+Dataset<-data.frame(NA,NA,NA,NA)
+names(Dataset)<-c("Subject", "miRNA", "Value", "Class")
+
+setwd("C:\\Users\\Admin\\Desktop\\miRNA_expression_csv\\seed")
+
+for(i in 1:nrow(miRNA_seq_info))
+{
+if(miRNA_seq_info$Reads[i]<Reads_threshold)
+{next}
+A<-paste0(c(miRNA_seq_info$Sample.ID[i]),".csv")
+B<-read.csv(A)
+
+Dataset_tmp <- data.frame(matrix(, nrow=nrow(B), ncol=4))
+names(Dataset_tmp)<-c("Subject", "miRNA", "Value", "Class")
+
+Dataset_tmp[,1]<-miRNA_seq_info$Sample[i]
+Dataset_tmp[,2]<-B$Name
+Dataset_tmp[,3]<-B$Expression.values/(miRNA_seq_info$Reads[i]/Reads_nomalization_threshold)
+Dataset_tmp[,4]<-metadata$Disease[metadata$Sample.ID==miRNA_seq_info$Sample.ID[i]]
+
+Dataset<-rbind(Dataset,Dataset_tmp)
+}
+
+Dataset<-Dataset[-1,]
+```
+```{r}
+Dataset_tmp <- Dataset[Dataset$Value>expression_threshold,]
+interestedmiRNA<-unique(Dataset_tmp$miRNA)
+```
+
+
+```{r}
+setwd("C:\\Users\\Admin\\Desktop\\miRNA_expression_csv\\seed")
+
+ProcessedDataset<-data.frame(NA,NA,NA,NA)
+names(ProcessedDataset)<-c("Subject", "miRNA", "Value", "Class")
+
+for(i in 1:nrow(miRNA_seq_info))
+{
+if(miRNA_seq_info$Reads[i]<Reads_threshold)
+{next}
+A<-paste0(c(miRNA_seq_info$Sample.ID[i]),".csv")
+B<-read.csv(A)
+
+Dataset_tmp <- data.frame(matrix(, nrow=length(interestedmiRNA), ncol=4))
+names(Dataset_tmp)<-c("Subject", "miRNA", "Value", "Class")
+
+Dataset_tmp[,1]<-miRNA_seq_info$Sample[i]
+Dataset_tmp[,2]<-interestedmiRNA
+
+for (j in 1:nrow(Dataset_tmp))
+{Dataset_tmp[j,3]<-subset(B, Name==Dataset_tmp[j,2])$Expression.values/(miRNA_seq_info$Reads[i]/Reads_nomalization_threshold)}
+
+Dataset_tmp[,4]<-metadata$Disease[metadata$Sample.ID==miRNA_seq_info$Sample.ID[i]]
+
+ProcessedDataset<-rbind(ProcessedDataset,Dataset_tmp)
+}
+
+
+ProcessedDataset<-ProcessedDataset[-1,]
+
+ProcessedDataset$miRNA<-gsub("-","_",ProcessedDataset$miRNA)
+
+```
+```{r}
+ProcessedDataset$Value<- rescale(ProcessedDataset$Value, to=c(0,100))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
