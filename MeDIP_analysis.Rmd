@@ -1,0 +1,171 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+
+```{r}
+#package download
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install()
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("MEDIPS")
+
+if (!requireNamespace("BiocManager", quietly=TRUE))
+install.packages("BiocManager")
+BiocManager::install("BSgenome.Hsapiens.UCSC.hg38")
+
+if (!requireNamespace("BiocManager", quietly=TRUE))
+install.packages("BiocManager")x
+BiocManager::install("BSgenome.Hsapiens.UCSC.hg19")
+
+if (!requireNamespace("BiocManager", quietly=TRUE))
+install.packages("BiocManager")
+BiocManager::install("MEDIPSData")
+
+if (!requireNamespace("BiocManager", quietly=TRUE))
+install.packages("BiocManager")
+BiocManager::install("BSgenome.Hsapiens.UCSC.hg38.masked")
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("BSgenome.Hsapiens.NCBI.GRCh38.p13")
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("Rsamtools")
+```
+
+
+```{r}
+#library import
+
+library("BSgenome")
+library(MEDIPS)
+library(BSgenome.Hsapiens.NCBI.GRCh38)
+library("MEDIPSData")
+library(Rsamtools)
+```
+
+
+```{r}
+#
+bam.file.osteoporosis.Rep1.MeDIP = ("DNAMe_S001.bam")
+bam.file.osteoporosis.Rep2.MeDIP = ("DNAMe_S004.bam")
+bam.file.osteoporosis.Rep3.MeDIP = ("DNAMe_S021.bam")
+bam.file.osteoporosis.Rep4.MeDIP = ("DNAMe_S027.bam")
+bam.file.osteoporosis.Rep5.MeDIP = ("DNAMe_S033.bam")
+bam.file.osteoporosis.Rep6.MeDIP = ("DNAMe_S041.bam")
+
+bam.file.normal.Rep1.MeDIP = ("DNAMe_S002.bam")
+bam.file.normal.Rep2.MeDIP = ("DNAMe_S010.bam")
+bam.file.normal.Rep3.MeDIP = ("DNAMe_S014.bam")
+bam.file.normal.Rep4.MeDIP = ("DNAMe_S015.bam")
+bam.file.normal.Rep5.MeDIP = ("DNAMe_S032.bam")
+bam.file.normal.Rep6.MeDIP = ("DNAMe_S066.bam")
+```
+
+```{r}
+#parameter
+BSgenome="BSgenome.Hsapiens.NCBI.GRCh38"
+uniq=1e-3
+extend=300
+shift=0
+ws=200
+```
+
+
+```{r}
+setwd("C:\\Users\\Admin\\Desktop\\Medip_seq_R")
+
+Osteoporosis_MeDIP = MEDIPS.createSet(file = bam.file.osteoporosis.Rep1.MeDIP,
+BSgenome = BSgenome, extend = extend, shift = shift, uniq = uniq,
+window_size = ws)
+```
+```{r}
+setwd("C:\\Users\\Admin\\Desktop\\Medip_seq_R")
+Osteoporosis_MeDIP = c(Osteoporosis_MeDIP, MEDIPS.createSet(file = bam.file.osteoporosis.Rep2.MeDIP,
+BSgenome = BSgenome, extend = extend, shift = shift, uniq = uniq, window_size = ws))
+
+Osteoporosis_MeDIP = c(Osteoporosis_MeDIP, MEDIPS.createSet(file = bam.file.osteoporosis.Rep3.MeDIP,
+BSgenome = BSgenome, extend = extend, shift = shift, uniq = uniq, window_size = ws))
+
+Osteoporosis_MeDIP = c(Osteoporosis_MeDIP, MEDIPS.createSet(file = bam.file.osteoporosis.Rep4.MeDIP,
+BSgenome = BSgenome, extend = extend, shift = shift, uniq = uniq, window_size = ws))
+
+Osteoporosis_MeDIP = c(Osteoporosis_MeDIP, MEDIPS.createSet(file = bam.file.osteoporosis.Rep5.MeDIP,
+BSgenome = BSgenome, extend = extend, shift = shift, uniq = uniq, window_size = ws))
+
+Osteoporosis_MeDIP = c(Osteoporosis_MeDIP, MEDIPS.createSet(file = bam.file.osteoporosis.Rep6.MeDIP,
+BSgenome = BSgenome, extend = extend, shift = shift, uniq = uniq, window_size = ws))
+```
+
+
+
+```{r}
+setwd("C:\\Users\\Admin\\Desktop\\Medip_seq_R")
+Normal_MeDIP = MEDIPS.createSet(file = bam.file.normal.Rep1.MeDIP,
+BSgenome = BSgenome, extend = extend, shift = shift, uniq = uniq,
+window_size = ws)
+```
+
+```{r}
+setwd("C:\\Users\\Admin\\Desktop\\Medip_seq_R")
+Normal_MeDIP = c(Normal_MeDIP, MEDIPS.createSet(file = bam.file.normal.Rep2.MeDIP,
+BSgenome = BSgenome, extend = extend, shift = shift, uniq = uniq, window_size = ws))
+
+Normal_MeDIP = c(Normal_MeDIP, MEDIPS.createSet(file = bam.file.normal.Rep3.MeDIP,
+BSgenome = BSgenome, extend = extend, shift = shift, uniq = uniq, window_size = ws))
+
+Normal_MeDIP = c(Normal_MeDIP, MEDIPS.createSet(file = bam.file.normal.Rep4.MeDIP,
+BSgenome = BSgenome, extend = extend, shift = shift, uniq = uniq, window_size = ws))
+
+Normal_MeDIP = c(Normal_MeDIP, MEDIPS.createSet(file = bam.file.normal.Rep5.MeDIP,
+BSgenome = BSgenome, extend = extend, shift = shift, uniq = uniq, window_size = ws))
+
+Normal_MeDIP = c(Normal_MeDIP, MEDIPS.createSet(file = bam.file.normal.Rep6.MeDIP,
+BSgenome = BSgenome, extend = extend, shift = shift, uniq = uniq, window_size = ws))
+
+```
+
+
+
+
+```{r}
+ CS = MEDIPS.couplingVector(pattern = "CG", refObj = Normal_MeDIP[[1]])
+```
+
+
+```{r}
+ mr.edgeR = MEDIPS.meth(MSet1 = Normal_MeDIP, MSet2 = Osteoporosis_MeDIP,
+ p.adj = "bonferroni", diff.method = "edgeR", MeDIP = F, CNV = F, minRowSum = 10)
+
+```
+
+```{r}
+mr.edgeR.s = MEDIPS.selectSig(results = mr.edgeR, p.value = 0.1,
+adj = T, ratio = F, bg.counts = NULL, CNV = F)
+```
+
+
+
+
+
+
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
